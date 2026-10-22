@@ -1,0 +1,45 @@
+plugins {
+    id 'java-library'
+    id 'net.neoforged.moddev' version '2.0.107'
+}
+
+version = project.mod_version
+group = project.mod_group_id
+
+base {
+    archivesName = project.mod_id
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(25)
+    }
+}
+
+neoForge {
+    version = project.neo_version
+
+    runs {
+        client {
+            client()
+        }
+    }
+
+    mods {
+        "${project.mod_id}" {
+            sourceSet sourceSets.main
+        }
+    }
+}
+
+// 这个模组没有 mixin / access transformer，资源目录里只有 META-INF/neoforge.mods.toml。
+processResources {
+    def expandProps = [
+            'mod_id'      : project.mod_id,
+            'mod_version' : project.mod_version
+    ]
+    inputs.properties(expandProps)
+    filesMatching(['META-INF/neoforge.mods.toml']) {
+        expand expandProps
+    }
+}
